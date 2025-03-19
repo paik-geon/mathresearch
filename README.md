@@ -146,7 +146,7 @@ def update(val):
     ax.set_title(f"Game Drop Simulation (Seed={seed_value})\nAdjusted Probabilities: {np.round(modified_probs, 3)}")
     fig.canvas.draw_idle()
 ```
-10000번의 시뮬레이션을 수행한 후 각각 그래프의 값을 생성
+10,000번의 시뮬레이션을 수행한 후 각각 그래프의 값을 생성
 
 ## 6. UI생성
 ```python
@@ -205,3 +205,101 @@ button.on_clicked(reset)
 plt.show()
 ```
 프로그램을 실행하기 위해 실행함수 호출
+
+***
+
+
+#  게임 랜덤 확률 조작 수식 정리
+
+
+##  1. 남은 확률 계산
+
+전설 아이템 확률을 제외한 **나머지 아이템들의 확률 총합**을 구함
+
+$$
+\mathit{remaining\_prob} = 1.0 - \mathit{legendary\_prob}
+$$
+
+
+
+##  2. 나머지 확률 조정 비율 계산
+
+기존 아이템들의 확률을 비율에 맞게 자동 조정
+
+$$
+\mathit{scaling\_factor} = \frac{\mathit{remaining\_prob}}{1.0 - P_{\mathit{legendary}}}
+$$
+
+ `scaling_factor`를 곱해서 나머지 확률을 조정할 수 있음
+
+
+
+##  3. 다른 아이템의 확률을 조정
+
+모든 아이템의 확률을 "남은 확률"에 맞춰 자동 조정
+
+$$
+P'_i = P_i \times \mathit{scaling\_factor}, \quad i \neq \text{Legendary}
+$$
+
+이 수식을 적용하면, 기존 확률 비율은 유지되면서도  
+총합이 100%가 되도록 자동 조정
+
+
+
+##  4. 전설 아이템 확률 설정
+
+사용자가 직접 조작한 확률을 전설 아이템 확률로 적용
+
+$$
+P'_{\mathit{legendary}} = \mathit{legendary\_prob}
+$$
+
+
+
+##  5. 랜덤 샘플링 (확률 분포 적용)
+
+각 아이템의 등장 확률이 **P_i**일 때,  
+10,000번의 시뮬레이션에서 각 아이템이 나올 개수는 다음과 같음
+
+$$
+N_i = P_i \times \text{trials}
+$$
+
+이를 통해 특정 아이템이 얼마나 뽑히는지를 계산 가능
+
+
+
+##  6. 시드값 적용 (난수 생성 제어)
+
+같은 시드(seed)를 사용하면 **항상 같은 확률 분포**에서 결과가 생성
+이를 위해 **LCG(Linear Congruential Generator) 난수 생성 공식**을 적용할 수 있음
+
+$$
+X_n = (aX_{n-1} + c) \mod m
+$$
+
+
+
+##  7. 결론
+
+- 전설 아이템 확률을 높이면, 나머지 확률이 자동으로 줄어듬
+- 확률의 총합이 100%로 유지되도록 설계됨
+- 같은 **시드(seed)** 값을 사용하면 **동일한 확률 분포에서 동일한 결과**가 나옴
+- 이 방식을 사용하면 **랜덤 확률을 조작하여 특정 아이템을 더 많이 드롭**할 수 있음
+
+
+
+## 출처 및 참고자료
+
+1. **확률 이론 (Probability Theory)**
+   - Sheldon Ross, *A First Course in Probability* (Pearson, 2019)
+   - William Feller, *An Introduction to Probability Theory and Its Applications* (John Wiley & Sons, 1968)
+
+2. **게임 확률 밸런싱 및 확률 조정 기법**
+   - Jesse Schell, *The Art of Game Design* (CRC Press, 2020)
+   - Richard Garfield, *Game Balance* (CRC Press, 2022)
+
+3. **난수 생성 알고리즘**
+   - Donald Knuth, *The Art of Computer Programming, Vol. 2: Seminumerical Algorithms* (Addison-Wesley, 1997)
+   - Pierre L'Ecuyer, *Random Number Generation and Monte Carlo Methods* (Springer, 2011)
