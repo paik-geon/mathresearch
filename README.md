@@ -1,5 +1,3 @@
-# mathresearch
-
 ## 전체코드
 ```python
 import numpy as np
