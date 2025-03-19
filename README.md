@@ -131,7 +131,7 @@ def generate_drops(seed_value, legendary_prob, trials=10000):
 결과는 아이템별 획득 개수와 조작된 확률을 반환하며 그래프를 통해 실시간으로 조작 효과를 확인할 수 있음
 
 
-## 5. #  그래프 업데이트 함수
+## 5. 그래프 업데이트 함수
 ```python
 def update(val):
     seed_value = int(seed_slider.val)  # 시드값
